@@ -1,47 +1,100 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ace Dönüştürücü</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ace Dönüştürücü PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;900&display=swap');
-        body { font-family: 'Outfit', sans-serif; background: #050505; color: white; }
-        .neon { border: 1px solid rgba(168, 85, 247, 0.2); }
+        body { font-family: 'Outfit', sans-serif; background: #050505; color: white; overflow-x: hidden; }
+        .neon-border { border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 20px rgba(168, 85, 247, 0.1); }
         .gradient-text { background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-bg { background: rgba(15, 15, 15, 0.8); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
-    <nav class="mb-10 text-center">
-        <span class="text-3xl font-black italic uppercase tracking-widest">Ace <span class="gradient-text">Dönüştürücü</span></span>
-    </nav>
-
-    <div class="w-full max-w-xl bg-[#0f0f0f] p-8 rounded-[30px] neon text-center">
-        <h1 class="text-4xl font-black mb-4">Hızlı. Şık. <span class="gradient-text">Özgür.</span></h1>
-        
-        <input type="file" id="f" class="hidden" onchange="document.getElementById('msg').innerText=this.files[0].name">
-        <label for="f" class="block p-12 bg-[#151515] rounded-2xl border border-dashed border-gray-800 cursor-pointer mb-6">
-            <div class="text-4xl mb-2">⚡</div>
-            <span id="msg" class="text-gray-400">Dosyanı Seç</span>
-        </label>
-
-        <button onclick="conv()" id="b" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-4 rounded-xl font-bold text-xl hover:scale-105 transition-all">ŞİMDİ DÖNÜŞTÜR</button>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="text-center mb-8">
+        <h2 class="text-sm uppercase tracking-[0.5em] text-gray-500 mb-2">Ace Studio Presents</h2>
+        <h1 class="text-5xl font-black italic tracking-tighter">ACE <span class="gradient-text">DÖNÜŞTÜRÜCÜ</span></h1>
     </div>
 
+    <div class="w-full max-w-lg card-bg p-8 rounded-[40px] neon-border">
+        <div class="mb-8 text-center">
+            <h3 class="text-2xl font-bold mb-2">Hızlı. Şık. <span class="gradient-text">HD.</span></h3>
+            <p class="text-gray-400 text-sm">Dosyalarını en yüksek kalitede PDF'e çevir.</p>
+        </div>
+
+        <input type="file" id="f" class="hidden" onchange="updateFileName(this)">
+        <label for="f" class="block p-10 bg-[#111111] border-2 border-dashed border-gray-800 rounded-3xl cursor-pointer hover:border-purple-500 transition-all mb-6 group">
+            <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">🖼️</div>
+            <span id="msg" class="text-gray-500 font-medium">Bir görsel seç veya sürükle</span>
+        </label>
+
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="bg-[#111111] p-4 rounded-2xl border border-gray-900">
+                <p class="text-[10px] uppercase text-gray-500 mb-1">Format</p>
+                <p class="font-bold text-purple-400 font-mono">JPG to PDF</p>
+            </div>
+            <div class="bg-[#111111] p-4 rounded-2xl border border-gray-900">
+                <p class="text-[10px] uppercase text-gray-500 mb-1">Kalite</p>
+                <p class="font-bold text-pink-400 font-mono">Ultra HD 4K</p>
+            </div>
+        </div>
+
+        <button onclick="conv()" id="b" class="w-full bg-white text-black py-5 rounded-2xl font-black text-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white transition-all active:scale-95 shadow-xl shadow-purple-500/10">
+            ŞİMDİ DÖNÜŞTÜR
+        </button>
+    </div>
+
+    <p class="mt-8 text-gray-600 text-xs tracking-widest uppercase">© 2026 Ace Sanal Lab — Tüm Hakları Saklıdır</p>
+
     <script>
+        function updateFileName(input) {
+            const msg = document.getElementById('msg');
+            if(input.files.length > 0) {
+                msg.innerText = input.files[0].name;
+                msg.classList.replace('text-gray-500', 'text-purple-400');
+            }
+        }
+
         async function conv() {
             const btn = document.getElementById('b'), file = document.getElementById('f').files[0];
-            if(!file) return alert("Dosya seç!");
-            btn.disabled = true; btn.innerText = "İŞLENİYOR...";
-            const d = new FormData(); d.append('file', file);
+            if(!file) return alert("Hoppala! Önce bir dosya seçmelisin kanka.");
+            
+            btn.disabled = true; 
+            btn.innerHTML = `<span class="animate-pulse">SİSTEM İŞLİYOR...</span>`;
+            
+            const d = new FormData(); 
+            d.append('file', file);
+            
             try {
-                const r = await fetch('https://ace-donusturucu.onrender.com/convert', {method: 'POST', body: d});
+                const r = await fetch('https://ace-donusturucu.onrender.com/convert', {
+                    method: 'POST', 
+                    body: d
+                });
+                
                 if(r.ok) {
                     const b = await r.blob(), u = URL.createObjectURL(b), a = document.createElement('a');
-                    a.href = u; a.download = "ace.pdf"; a.click();
-                } else alert("Hata!");
-            } catch(e) { alert("Sunucu uyanıyor olabilir, birazdan tekrar dene."); }
-            btn.disabled = false; btn.innerText = "ŞİMDİ DÖNÜŞTÜR";
+                    a.href = u; 
+                    a.download = "ace_hd_output.pdf"; 
+                    a.click();
+                    btn.innerHTML = "BAŞARILI! ✅";
+                    setTimeout(() => { btn.innerHTML = "TEKRAR DÖNÜŞTÜR"; btn.disabled = false; }, 2000);
+                } else {
+                    alert("Sunucu tarafında bir sıkıntı çıktı.");
+                    resetBtn();
+                }
+            } catch(e) { 
+                alert("Sunucu uyanıyor olabilir, 30 saniye sonra tekrar dene."); 
+                resetBtn();
+            }
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('b');
+            btn.disabled = false; 
+            btn.innerText = "ŞİMDİ DÖNÜŞTÜR";
         }
     </script>
 </body>
