@@ -1,45 +1,48 @@
-async function startConversion() {
-    const btn = document.getElementById('actionBtn');
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
-    
-    if(!file) {
-        alert("Önce bir dosya seçmelisin!");
-        return;
-    }
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ace Dönüştürücü</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;900&display=swap');
+        body { font-family: 'Outfit', sans-serif; background: #050505; color: white; }
+        .neon { border: 1px solid rgba(168, 85, 247, 0.2); }
+        .gradient-text { background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+    <nav class="mb-10 text-center">
+        <span class="text-3xl font-black italic uppercase tracking-widest">Ace <span class="gradient-text">Dönüştürücü</span></span>
+    </nav>
 
-    btn.style.opacity = "0.5";
-    btn.innerHTML = "DÖNÜŞTÜRÜLÜYOR...";
-    btn.disabled = true;
+    <div class="w-full max-w-xl bg-[#0f0f0f] p-8 rounded-[30px] neon text-center">
+        <h1 class="text-4xl font-black mb-4">Hızlı. Şık. <span class="gradient-text">Özgür.</span></h1>
+        
+        <input type="file" id="f" class="hidden" onchange="document.getElementById('msg').innerText=this.files[0].name">
+        <label for="f" class="block p-12 bg-[#151515] rounded-2xl border border-dashed border-gray-800 cursor-pointer mb-6">
+            <div class="text-4xl mb-2">⚡</div>
+            <span id="msg" class="text-gray-400">Dosyanı Seç</span>
+        </label>
 
-    const formData = new FormData();
-    formData.append('file', file);
+        <button onclick="conv()" id="b" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 py-4 rounded-xl font-bold text-xl hover:scale-105 transition-all">ŞİMDİ DÖNÜŞTÜR</button>
+    </div>
 
-    try {
-        // Senin Render sunucuna bağlanıyoruz
-        const response = await fetch('https://ace-donusturucu.onrender.com/convert', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = "ace-donusturucu.pdf";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        } else {
-            alert("Sunucu bir hata verdi. Dosya formatını kontrol et.");
+    <script>
+        async function conv() {
+            const btn = document.getElementById('b'), file = document.getElementById('f').files[0];
+            if(!file) return alert("Dosya seç!");
+            btn.disabled = true; btn.innerText = "İŞLENİYOR...";
+            const d = new FormData(); d.append('file', file);
+            try {
+                const r = await fetch('https://ace-donusturucu.onrender.com/convert', {method: 'POST', body: d});
+                if(r.ok) {
+                    const b = await r.blob(), u = URL.createObjectURL(b), a = document.createElement('a');
+                    a.href = u; a.download = "ace.pdf"; a.click();
+                } else alert("Hata!");
+            } catch(e) { alert("Sunucu uyanıyor olabilir, birazdan tekrar dene."); }
+            btn.disabled = false; btn.innerText = "ŞİMDİ DÖNÜŞTÜR";
         }
-    } catch (error) {
-        console.error(error);
-        alert("Sunucuya bağlanılamadı. Render uyanıyor olabilir, lütfen 30 saniye sonra tekrar dene.");
-    } finally {
-        btn.style.opacity = "1";
-        btn.innerHTML = "ŞİMDİ DÖNÜŞTÜR";
-        btn.disabled = false;
-    }
-}
+    </script>
+</body>
+</html>
