@@ -1,133 +1,45 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ace Dönüştürücü</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap');
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: #050505; 
-            color: #ffffff;
-            overflow-x: hidden;
+async function startConversion() {
+    const btn = document.getElementById('actionBtn');
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    
+    if(!file) {
+        alert("Önce bir dosya seçmelisin!");
+        return;
+    }
+
+    btn.style.opacity = "0.5";
+    btn.innerHTML = "DÖNÜŞTÜRÜLÜYOR...";
+    btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        // Senin Render sunucuna bağlanıyoruz
+        const response = await fetch('https://ace-donusturucu.onrender.com/convert', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "ace-donusturucu.pdf";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } else {
+            alert("Sunucu bir hata verdi. Dosya formatını kontrol et.");
         }
-        .neon-border {
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            transition: all 0.3s ease;
-        }
-        .neon-border:hover {
-            border: 1px solid rgba(168, 85, 247, 0.6);
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
-        }
-        .gradient-btn {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .custom-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a855f7'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1.5em;
-        }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col">
-
-    <nav class="w-full py-8 px-10 flex justify-center items-center">
-        <div class="flex items-center gap-3">
-            <span class="text-3xl font-black tracking-widest uppercase italic">Ace <span class="gradient-text underline decoration-purple-500/30">Dönüştürücü</span></span>
-        </div>
-    </nav>
-
-    <main class="flex-grow flex flex-col items-center justify-center px-6 pb-20">
-        
-        <div class="text-center mb-16">
-            <h1 class="text-5xl md:text-7xl font-black tracking-tighter mb-6">
-                Hızlı. Şık. <span class="gradient-text">Özgür.</span>
-            </h1>
-            <p class="text-gray-400 text-lg md:text-xl font-light tracking-wide">
-                Dosyalarını dönüştürmenin en estetik yolu.
-            </p>
-        </div>
-
-        <div class="w-full max-w-2xl bg-[#0f0f0f] p-10 rounded-[40px] neon-border">
-            <div class="space-y-10">
-                
-                <div class="relative group">
-                    <input type="file" id="fileInput" class="hidden">
-                    <label for="fileInput" class="flex flex-col items-center justify-center py-20 bg-[#151515] rounded-[30px] border border-dashed border-gray-800 cursor-pointer group-hover:bg-[#1a1a1a] transition-all">
-                        <div class="text-6xl mb-4 group-hover:scale-110 transition-transform">⚡</div>
-                        <span class="text-gray-300 font-semibold text-xl">Dosyanı Buraya At</span>
-                        <p class="text-gray-600 text-sm mt-2">veya tıklayarak seç</p>
-                    </label>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-3">
-                        <label class="text-[10px] tracking-[0.3em] font-bold text-purple-500 uppercase ml-2">Neye Dönüşecek?</label>
-                        <select id="convertType" class="custom-select w-full bg-[#151515] border border-gray-800 rounded-2xl p-5 text-white outline-none focus:border-purple-500 transition-all font-medium">
-                            <option value="pdf">Görselden PDF'e</option>
-                            <option value="jpg">Görselden JPG'ye</option>
-                            <option value="webp">Görselden WEBP'ye</option>
-                        </select>
-                    </div>
-                    <div class="space-y-3">
-                        <label class="text-[10px] tracking-[0.3em] font-bold text-purple-500 uppercase ml-2">İşlem Kalitesi</label>
-                        <select class="custom-select w-full bg-[#151515] border border-gray-800 rounded-2xl p-5 text-white outline-none focus:border-purple-500 transition-all font-medium">
-                            <option>En Yüksek (HD)</option>
-                            <option>Dengeli</option>
-                            <option>Hızlı / Küçük</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button onclick="startConversion()" id="actionBtn" class="w-full gradient-btn py-6 rounded-[25px] font-black text-2xl tracking-tight text-white shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all">
-                    ŞİMDİ DÖNÜŞTÜR
-                </button>
-            </div>
-        </div>
-
-        <div class="mt-20 opacity-30 hover:opacity-100 transition-opacity">
-            <div class="px-10 py-4 border border-gray-900 rounded-full text-[10px] tracking-[0.5em] text-gray-500 uppercase">
-                Reklam Alanı
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="py-10 text-center border-t border-gray-900">
-        <p class="text-[10px] tracking-widest text-gray-700 uppercase font-bold">Ace Dönüştürücü &copy; 2026</p>
-    </footer>
-
-    <script>
-        function startConversion() {
-            const btn = document.getElementById('actionBtn');
-            const file = document.getElementById('fileInput').files[0];
-            
-            if(!file) {
-                alert("Önce dosyayı seçmelisin!");
-                return;
-            }
-
-            btn.style.opacity = "0.5";
-            btn.innerHTML = "İŞLENİYOR...";
-            btn.disabled = true;
-
-            setTimeout(() => {
-                alert("Backend henüz bağlanmadı. Tasarımın son halini kontrol et!");
-                btn.style.opacity = "1";
-                btn.innerHTML = "ŞİMDİ DÖNÜŞTÜR";
-                btn.disabled = false;
-            }, 1500);
-        }
-    </script>
-</body>
-</html>
-
+    } catch (error) {
+        console.error(error);
+        alert("Sunucuya bağlanılamadı. Render uyanıyor olabilir, lütfen 30 saniye sonra tekrar dene.");
+    } finally {
+        btn.style.opacity = "1";
+        btn.innerHTML = "ŞİMDİ DÖNÜŞTÜR";
+        btn.disabled = false;
+    }
+}
