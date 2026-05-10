@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ace-Donusturucu | Hızlı & Profesyonel Dosya Çevirici</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .ace-gradient { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen">
+
+    <nav class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 ace-gradient rounded-lg flex items-center justify-center font-black text-white">A</div>
+            <span class="text-xl font-black tracking-tighter text-white">ACE-<span class="text-blue-500">DONUSTURUCU</span></span>
+        </div>
+        <div class="hidden md:block text-xs text-slate-500 font-medium tracking-widest uppercase">The Ace of Conversion</div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto mt-6 px-4">
+        <div class="w-full py-3 bg-slate-900 border border-slate-800 rounded-lg text-center">
+            <span class="text-[10px] text-slate-600 uppercase tracking-widest font-bold">REKLAM ALANI (Sponsorlu Bağlantı)</span>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto p-6 mt-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+                Dosyaların <span class="text-blue-500 italic">Ası</span> Burada.
+            </h1>
+            <p class="text-slate-400 max-w-md mx-auto text-sm md:text-base">
+                Ace-Donusturucu ile saniyeler içinde format değiştirin. Hızlı, güvenli ve tamamen ücretsiz.
+            </p>
+        </div>
+
+        <div class="bg-slate-900 p-1 rounded-3xl shadow-2xl border border-slate-800 relative">
+            <div class="bg-slate-950 p-6 md:p-10 rounded-[1.4rem] space-y-8">
+                
+                <div class="group border-2 border-dashed border-slate-800 hover:border-blue-500/50 rounded-2xl p-12 text-center transition-all cursor-pointer bg-slate-900/30">
+                    <input type="file" id="fileInput" class="hidden">
+                    <label for="fileInput" class="cursor-pointer block">
+                        <div class="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">📄</div>
+                        <span class="text-xl font-bold block mb-1">Bir dosya seçin</span>
+                        <p class="text-sm text-slate-500 font-medium italic">Veya buraya sürükleyin</p>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">İşlem Türü</label>
+                        <select id="convertType" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium">
+                            <option value="pdf">Görseli PDF Yap</option>
+                            <option value="jpg">PNG'yi JPG Yap</option>
+                            <option value="webp">WEBP'ye Dönüştür</option>
+                            <option value="mp3">Videodan Ses Ayıkla (MP3)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase ml-1">Kalite</label>
+                        <select class="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium">
+                            <option>Yüksek Kalite</option>
+                            <option>Standart</option>
+                            <option>Küçük Boyut (Sıkıştır)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="startConversion()" id="actionBtn" class="w-full ace-gradient hover:shadow-lg hover:shadow-blue-500/20 py-5 rounded-2xl font-black text-xl tracking-tighter transition-all active:scale-[0.98]">
+                    DÖNÜŞTÜRMEYİ BAŞLAT
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-12 w-full py-8 bg-slate-900/50 border border-slate-800 rounded-2xl text-center">
+            <span class="text-xs text-slate-700 font-bold uppercase tracking-[0.2em]">Buraya Büyük Banner Reklam Gelecek</span>
+        </div>
+    </main>
+
+    <footer class="text-center p-10 text-slate-600 text-xs font-medium">
+        &copy; 2026 ACE-DONUSTURUCU. Tüm hakları saklıdır. <br>
+        <span class="text-blue-900/50">Sanalcı tarafından geliştirildi.</span>
+    </footer>
+
+    <script>
+        function startConversion() {
+            const btn = document.getElementById('actionBtn');
+            const file = document.getElementById('fileInput').files[0];
+            
+            if(!file) {
+                alert("Lütfen önce bir dosya seç 'As'lan parçası!");
+                return;
+            }
+
+            btn.innerHTML = "İŞLENİYOR...";
+            btn.disabled = true;
+
+            // Burası Backend (Python) bağlandığında çalışacak kısım
+            setTimeout(() => {
+                alert("Backend henüz hazır değil, Ace! Şimdi Python sunucumuzu kurma vaktimiz geldi.");
+                btn.innerHTML = "DÖNÜŞTÜRMEYİ BAŞLAT";
+                btn.disabled = false;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
